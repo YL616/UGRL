@@ -6,7 +6,6 @@ from torch.utils.data import Dataset
 import os
 import imageio
 from . import transforms
-import torchvision
 
 def load_img_name_list(img_name_list_path):
     img_name_list = np.loadtxt(img_name_list_path, dtype=str)
@@ -105,7 +104,6 @@ class VOC12ClsDataset(VOC12Dataset):
             if self.img_fliplr:
                 image = transforms.random_fliplr(image)
             
-            # MODIFIED: Activated color jitter for better augmentation diversity
             # image = self.color_jittor(image)
             
             if self.crop_size:
@@ -147,13 +145,11 @@ class VOC12ClsDataset(VOC12Dataset):
         cls_label = self.label_list[img_name]
 
         if self.aug:
-            # MODIFIED: Generate two independent augmented views from the same image
             image1, img_box1 = self.__transforms(image=image.copy())
             image2, img_box2 = self.__transforms(image=image.copy())
             
             return img_name, image1, image2, cls_label, img_box1, img_box2
         else:
-            # For validation or testing, we only need one view
             return img_name, image, cls_label
 
 
